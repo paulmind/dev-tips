@@ -3,7 +3,6 @@ echo Hello World
 
 : <<'END'
 bla bla
-blurfl
 END
 
 # VIM::
@@ -50,7 +49,7 @@ hg revert /filepath1 /filepath2 # восстанавливает файл из �
 hg revert -C filename.java # восстанавливает файл из репозитория не создавая копию filename.java.orig (you can also use the flag --no-backup)
 hg rollback # откатить последний коммит
 
-hg pull 'http://dev.travelsystem.ru:8003/'
+hg pull 'http://www.example.com:8001/'
 hg parent -r REV
 
 hg add folder1/folder2 # добавит все новые файлы в папке (folder2) в репозиторий
@@ -110,7 +109,7 @@ time wget -O 'test' 'http://www.example.com/'
 # загрузить содержимое страницы в файл test
 wget --force-html -i /home/user/urls.html -P /home/user/tmp/ -o /home/user/tmp/logs
 #							|						|					|
-#						files with urls		downloaded files		log file
+#					files with urls			downloaded files		log file
 # конвейер загрузки сайтов, ссылки на которые указаны в html файле
 
 mkdir -m 664 /var/tmp/xdebug
