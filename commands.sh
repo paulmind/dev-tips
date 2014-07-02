@@ -5,11 +5,31 @@ echo Hello World
 bla bla
 END
 
+#ctrl+->(стрелка)
+# переход к след пробелу
+#ctrl+shift->(стрелка)
+# выделить и перейти к след пробелу
+
+
+# SCREEN::
+
+
+screen -x # create screen
+# (Ctrl+a+?) HELP
+# (Ctrl+a+n) change to next window in list
+# (Ctrl+a+p) change to previous window in list
+# (Ctrl+a+") see window list
+
+
 # VIM::
+
 
 F8 '(удалить символы)' + Tab # - переключение кодировки файла
 y # undo откат изменений
-ggVG # выделить все
+Ctrl-R # redo возврат изменений
+ggVG # (g+g+Shift+v+Shift+g) выделить все
+gg # в начало файла
+G # (Shift+g) в конец файла
 
 
 :! # shell commands
@@ -18,11 +38,13 @@ ggVG # выделить все
 :%s/foo/bar/gc
 # change each 'foo' to 'bar', but ask for confirmation first.
 
-:set paste # втавка без табов
+:set paste # вставка без табов
 :set nonumber # скрыть номера строк
 :set number
 
+
 # MYSQL::
+
 
 mysql -u username -p userpass
 mysql> show processlist;
@@ -30,7 +52,9 @@ mysql> show processlist\g
 mysql> show processlist | grep -v ''
 mysql> exit
 
+
 # MERCURIAL::
+
 
 hg init /dir1/dir2 # создает репозиторий
 hg st
@@ -50,6 +74,7 @@ hg revert -C filename.java # восстанавливает файл из реп
 hg rollback # откатить последний коммит
 
 hg pull 'http://www.example.com:8001/'
+hg clone test/ test.copy/
 hg parent -r REV
 
 hg add folder1/folder2 # добавит все новые файлы в папке (folder2) в репозиторий
@@ -62,14 +87,21 @@ hg up -C # выкладывает текущую (после hg pull) ревиз
 hg up -C -r 888 # позволяет перемещаться вперед и назад ко времени создания любой ревизии, при этом откатив все измененные файлы
 
 hg log filename.java --limit 3 # отображает последние 3 коммита файла
+hg log filename.java -l 3
+
 
 # BASH::
+
 
 sudo bash
 # режим супер пользователя (root); выход из режима exit
 
 passwd
 # смена пароля
+# Enter old password:
+# Enter new password:
+# Re-enter new password:
+# Password updated successfully.
 
 bunzip2 backup.tar.bz2
 # распаковка bz2
@@ -92,37 +124,15 @@ sudo chgrp -R devs .;sudo chmod -R g+w .
 # | | |
 # r w x
 # 4 2 1 - биты
+#
+# d[rwx][rwx][rwx]
+# d[user(u)][group(g)][other(o)]
+#
+# -[rwx][rwx][rwx]
+# -[user(u)][group(g)][other(o)]
+#
 # example 664 rw-(4+2) rw-(4+2) r--(4)
 # example 253 -w-(2) r-x(4+1) -wx(2+1)
-
-mv common common-tmp; mv common-20140101 common; apache2ctl restart
-# откатить проект
-
-cp -r /var/www/common /var/www/common-20140101
-cp -r common common-20140101
-
-scp testuser@example.com:/var/www/common/filename.java /var/www/common/testdir
-# откуда / куда
-#	скопировать файл по SSH в директорию
-
-time wget -O 'test' 'http://www.example.com/'
-# загрузить содержимое страницы в файл test
-wget --force-html -i /home/user/urls.html -P /home/user/tmp/ -o /home/user/tmp/logs
-#							|						|					|
-#					files with urls			downloaded files		log file
-# конвейер загрузки сайтов, ссылки на которые указаны в html файле
-
-mkdir -m 664 /var/tmp/xdebug
-mkdir -p /backup/{2008,2009,2010}/{01,02,03,04,05,06,07,08,09,10,11,12}/
-# create multiple directory in one mkdir command
-
-php -i | grep 'Configuration File'
-# | перенаправление stdout
-php -i | grep 'xdebug'
-php -d xdebug.profiler_enable=On script.php
-php -d xdebug.default_enable=On -d xdebug.profiler_enable=On /test/script.php
-php -r ''
-#	запуск скрипта в консоли
 
 ls -l
 #	-l (list) содержимое директории
@@ -152,8 +162,8 @@ kill pid
 # убить процесс
 
 less /filepath
-#	shift+G - перейти в конец
-#	shift+F - режим слежения лога аналог (tail -f)
+#	Shift+G - перейти в конец
+#	Shift+F - режим слежения лога аналог (tail -f)
 #	? - поиск назад
 #	/ - поиск вперед
 #	N - перейти к след.
@@ -187,13 +197,56 @@ tail -f /var/log/test.log
 tail -n 50 /var/log/test.log
 # последние 50 записей лога
 
-php shell/init.php
-# запуск php скрипта
-
 siege -b -i -c 5 -r 1 -t10M --log[=FILE] --file=FILE
 siege -b -i -c 5 -r 1 --log[=FILE] --file=FILE
+siege -c2 -t60M -i -f /var/tmp/urls.txt
+# -c количество имитируемых пользователей
+# -t время, за которое должно пройти тестирование
 
-#ctrl+->(стрелка)
-# переход к след пробелу
-#ctrl+shift->(стрелка)
-# выделить и перейти к след пробелу
+
+# APACHE::
+
+
+mv common common-tmp; mv common-20140101 common; apache2ctl restart
+# откатить проект
+apache2ctl restart
+# Restarts the Apache httpd daemon. If the daemon is not running, it is started.
+apache2ctl graceful
+# Gracefully restarts the Apache httpd daemon.
+# If the daemon is not running, it is started.
+# This differs from a normal restart in that currently open connections are not aborted.
+
+cp -r /var/www/common /var/www/common-20140101
+cp -r common common-20140101
+
+scp testuser@example.com:/var/www/common/filename.java /var/www/common/testdir
+# откуда / куда
+#	скопировать файл по SSH в директорию
+
+time wget -O 'test' 'http://www.example.com/'
+# загрузить содержимое страницы в файл test
+wget --force-html -i /home/user/urls.html -P /home/user/tmp/ -o /home/user/tmp/logs
+#							|						|					|
+#					files with urls			downloaded files		log file
+# конвейер загрузки сайтов, ссылки на которые указаны в html файле
+
+mkdir -m 664 /var/tmp/xdebug
+mkdir -p /backup/{2008,2009,2010}/{01,02,03,04,05,06,07,08,09,10,11,12}/
+# create multiple directory in one mkdir command
+
+
+# PHP::
+
+
+php -i | grep 'Configuration File'
+# | перенаправление stdout
+php -i | grep 'xdebug'
+php -d xdebug.profiler_enable=On script.php
+php -d xdebug.default_enable=On -d xdebug.profiler_enable=On /test/script.php
+php shell/test.php
+# запуск php скрипта
+php -r ''
+# выполнение php кода в консоли
+php --ini
+# путь к файлу php.ini
+# Dude, where's my php.ini?
