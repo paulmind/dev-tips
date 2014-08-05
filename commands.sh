@@ -24,7 +24,7 @@ screen -x # create screen
 # VIM::
 
 
-F8 '(удалить символы)' + Tab # - переключение кодировки файла
+F8 '(удалить символ)' + Tab # - переключение кодировки файла
 y # undo откат изменений
 Ctrl-R # redo возврат изменений
 ggVG # (g+g+Shift+v+Shift+g) выделить все
@@ -40,8 +40,17 @@ G # (Shift+g) в конец файла
 
 :set paste # вставка без табов
 :set nonumber # скрыть номера строк
+:set nonu # скрыть номера строк
 :set number
-
+:set nu
+:his # lists the command history
+:his / # lists the search history
+# In many situations, a better solution is the command-line window which you can open in two ways:
+q: # for commands
+q/ # for searches
+# OR
+: + Ctrl-f # Type : or / to start entering a command or search, then press the 'cedit' key (default is Ctrl-f)
+/ + Ctrl-f
 
 # MYSQL::
 
