@@ -32,7 +32,7 @@ gg # в начало файла
 G # (Shift+g) в конец файла
 
 
-:! # shell commands
+:! # execute shell commands
 /filepath +'номер строки'
 
 :%s/foo/bar/gc
@@ -51,6 +51,7 @@ q/ # for searches
 # OR
 : + Ctrl-f # Type : or / to start entering a command or search, then press the 'cedit' key (default is Ctrl-f)
 / + Ctrl-f
+
 
 # MYSQL::
 
@@ -169,6 +170,7 @@ ps -ef --forest | grep 'keyword'
 
 kill pid
 # убить процесс
+pkill -f my_pattern # убить процессы по маске 'my_pattern'
 
 less /filepath
 #	Shift+G - перейти в конец
