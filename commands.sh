@@ -56,11 +56,27 @@ q/ # for searches
 # MYSQL::
 
 
-mysql -u username -p userpass
+mysql -u username -p
+# enter password
+
 mysql> show processlist;
 mysql> show processlist\g
 mysql> show processlist | grep -v ''
 mysql> exit
+
+# MySQL restore backup
+# If the database you want to restore doesn't already exist, you need to create it first
+mysql --verbose --user=XXXXXX --password DB_NAME < db_backup.dump
+mysql --verbose --user=XXXXXX --password DB_NAME < /PATH/TO/DUMPFILE.SQL
+mysql -v -u XXXXXX -p DB_NAME < /PATH/TO/DUMPFILE.SQL
+
+# MySQL dump databases
+# Dump ALL MySQL databases
+mysqldump --user=XXXXXX --password=XXXXXX -A > /PATH/TO/DUMPFILE.SQL
+# Dump individual or multiple MySQL databases
+mysqldump --user=XXXXXX --password=XXXXXX --databases DB_NAME1 DB_NAME2 DB_NAME3 > /PATH/TO/DUMPFILE.SQL
+# Dump only certain tables from a MySQL database
+mysqldump --user=XXXXXX --password=XXXXXX --databases DB_NAME --tables TABLE_NAME > /PATH/TO/DUMPFILE.SQL
 
 
 # MERCURIAL::
