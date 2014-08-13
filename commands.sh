@@ -14,7 +14,8 @@ END
 # SCREEN::
 
 
-screen -x # create screen
+screen # create screen
+screen -x # attach to a running session (enter this command into PuTTY/SSH->Category->Connection->SSH in Remote command field)
 # (Ctrl+a+?) HELP
 # (Ctrl+a+n) change to next window in list
 # (Ctrl+a+p) change to previous window in list
