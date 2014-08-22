@@ -31,7 +31,13 @@ Ctrl-R # redo возврат изменений
 ggVG # (g+g+Shift+v+Shift+g) выделить все
 gg # в начало файла
 G # (Shift+g) в конец файла
-
+Shift+v # visual line mode
+	3j # press 3j to go down 3 lines, or press j 3 times
+	d # to delete select row
+	y # to yank/copy
+	x # to cut
+	p # to paste after cursor
+	P # to paste before cursor
 
 :! # execute shell commands
 /filepath +'номер строки'
@@ -204,9 +210,12 @@ find -type f -name 'header.php' -exec sed -i -r 's/nocache=20140303/nocache=2014
 # рекурсивный поиск и замена текста в файлах
 
 ionice -c 3 find . -name '*.php'
-#низкий приоритет выполнения команд (если диск загружен не использует его, только когда диск свободен)
+# низкий приоритет выполнения команд (если диск загружен не использует его, только когда диск свободен)
 
-grep -rn '' . |less
+grep -rn --exclude-dir=dir 'pattern' .
+# recent versions of GNU Grep (>= 2.5.2) provide:
+# exclude directories matching the pattern dir from recursive directory searches.
+grep -rn '' . | less
 # grab log
 grep 'ERROR' /var/log/test.log | grep '2014.01.01' | wc
 grep 'ERROR' /var/log/test.log | grep '2014.01.01' | less
