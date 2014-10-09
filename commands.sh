@@ -16,10 +16,13 @@ END
 
 screen # create screen
 screen -x # attach to a running session (enter this command into PuTTY/SSH->Category->Connection->SSH in Remote command field)
+screen -x # see all session
+
 # (Ctrl+a+?) HELP
 # (Ctrl+a+n) change to next window in list
 # (Ctrl+a+p) change to previous window in list
 # (Ctrl+a+") see window list
+# (Ctrl+a+d) close session
 
 
 # VIM::
@@ -58,6 +61,12 @@ q/ # for searches
 # OR
 : + Ctrl-f # Type : or / to start entering a command or search, then press the 'cedit' key (default is Ctrl-f)
 / + Ctrl-f
+
+vim -o *dir_template*/header.php # находит по маске пути к файлам header.php в текущей директории, открывает их, разделяя экран горизонтально
+# в таком режиме переключение между файлами (Ctrl+w+[стрелка вверх|стрелка вниз])
+vim -O *dir_template*/header.php # с флагом -O экран разделяется вертикально
+# в таком режиме переключение между файлами (Ctrl+w+[стрелка влево|стрелка вправо])
+vim -p *dir_template*/header.php # с флагом -p vim открывает файлы во вкладках
 
 
 # MYSQL::
@@ -111,7 +120,9 @@ hg clone test/ test.copy/
 hg parent -r REV
 
 hg add folder1/folder2 # добавит все новые файлы в папке (folder2) в репозиторий
+hg add folder1/folder2/* # добавит все новые файлы и подпапки (folder2) в репозиторий
 hg ci -m 'comment' folder1/folder2 # закоммитит добавленные файлы в папке (folder2) в репозиторий
+hg ci -m 'comment' folder1/folder2/* # закоммитит все файлы и подпапки в folder2 в репозиторий
 hg mv # перемещает/переименовывает файл
 hg remove # помечает файлы как запланированные для удаления из репозитория. Файлы на диске не будут удалены до тех пор, пока вы не зафиксируете изменения.
 hg heads # текущая ветка
@@ -237,8 +248,10 @@ tail -n 50 /var/log/test.log
 siege -b -i -c 5 -r 1 -t10M --log[=FILE] --file=FILE
 siege -b -i -c 5 -r 1 --log[=FILE] --file=FILE
 siege -c2 -t60M -i -f /var/tmp/urls.txt
+# -h HELP, prints the help section which includes a summary of all the command line options.
 # -c количество имитируемых пользователей
 # -t время, за которое должно пройти тестирование
+# -r, --reps=NUM REPS, number of times to run the test.
 
 
 # APACHE::
@@ -260,6 +273,9 @@ scp testuser@example.com:/var/www/common/filename.java /var/www/common/testdir
 # откуда / куда
 #	скопировать файл по SSH в директорию
 
+# copy the directory "foo" from the local host to a remote host's directory "bar"
+scp -r foo testuser@example.com:/some/remote/directory/bar
+
 time wget -O 'test' 'http://www.example.com/'
 # загрузить содержимое страницы в файл test
 wget --force-html -i /home/user/urls.html -P /home/user/tmp/ -o /home/user/tmp/logs
@@ -270,6 +286,21 @@ wget --force-html -i /home/user/urls.html -P /home/user/tmp/ -o /home/user/tmp/l
 mkdir -m 664 /var/tmp/xdebug
 mkdir -p /backup/{2008,2009,2010}/{01,02,03,04,05,06,07,08,09,10,11,12}/
 # create multiple directory in one mkdir command
+
+
+# COMPOSER::
+# Install
+# You can run these commands to easily access composer from anywhere on your system:
+curl -sS https://getcomposer.org/installer | php
+mv composer.phar /usr/local/bin/composer
+# Note: If the above fails due to permissions, run the mv line again with sudo.
+# Then, just run composer in order to run Composer instead of php composer.phar.
+#   ______
+#  / ____/___  ____ ___  ____  ____  ________  _____
+# / /   / __ \/ __ `__ \/ __ \/ __ \/ ___/ _ \/ ___/
+#/ /___/ /_/ / / / / / / /_/ / /_/ (__  )  __/ /
+#\____/\____/_/ /_/ /_/ .___/\____/____/\___/_/
+#                    /_/
 
 
 # PHP::
