@@ -106,6 +106,10 @@ hg status # отображает список измененных файлов,
 # «M» означаете «Modified» — файл был изменен.
 # "!" означает отсутствие — файл должен быть здесь, но куда-то делся.
 # "?" означает что, состояние не определено — Mercurial ничего не знает про этот файл.
+hg st -m
+hg st -a
+hg st -r
+# shows only modify,add,remove files
 hg serve # запускает веб-сервер и делает текущий репозиторий доступным в сети
 hg serve -p 8001 #
 hg diff /filepath # показывает изменения в файле
@@ -133,6 +137,8 @@ hg up -C -r 888 # позволяет перемещаться вперед и н
 hg log filename.java --limit 3 # отображает последние 3 коммита файла
 hg log filename.java -l 3
 
+hg cat -r REV /filepath1 > /filepath1
+# команда восстанавливает изменения файла из коммита
 
 # BASH::
 
@@ -187,6 +193,9 @@ du -d 1 -h ~/tmp/
 # (Disk Usage)
 # Using '-h' option with 'du' command provides results in 'Human Readable Format'. Means you can see sizes in Bytes, Kilobytes, Megabytes, Gigabytes etc.
 # показывает папки вложенные
+du -sh *
+du -sh temp/*
+# size of directory
 
 # grep логов apache
 ls /var/log/apache2/
