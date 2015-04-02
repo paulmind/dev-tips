@@ -140,6 +140,22 @@ hg log filename.java -l 3
 hg cat -r REV /filepath1 > /filepath1
 # команда восстанавливает изменения файла из коммита
 
+
+# ARCH::
+
+# настройка шрифтов
+
+# установим шрифт tamsyn
+sudo pacman -S tamsyn-font
+# обновим кэш шрифтов
+sudo fc-cache
+# убедимся, что шрифт добавился в систему
+fc-list | grep Tamsyn
+# чтобы изменить стандартный шрифт иксов на tamsyn, необходимо создать файл ~/.fonts.conf
+# с содержимым из примера Liberation Font configuration (изменив Liberation на Tamsyn):
+# https://wiki.archlinux.org/index.php/Font_configuration/fontconfig_examples
+
+
 # BASH::
 
 
