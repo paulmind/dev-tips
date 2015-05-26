@@ -143,6 +143,7 @@ hg cat -r REV /filepath1 > /filepath1
 
 # ARCH::
 
+
 # настройка шрифтов
 
 # установим шрифт tamsyn
@@ -154,6 +155,16 @@ fc-list | grep Tamsyn
 # чтобы изменить стандартный шрифт иксов на tamsyn, необходимо создать файл ~/.fonts.conf
 # с содержимым из примера Liberation Font configuration (изменив Liberation на Tamsyn):
 # https://wiki.archlinux.org/index.php/Font_configuration/fontconfig_examples
+# также в файл ~/.fonts.conf необходимо добавить размеры шрифтов
+#<match target="font">
+#<test name="size" compare="less_eq"><double>8</double></test>
+#</match>
+#<match target="font">
+#<test name="size" compare="more_eq"><double>14</double></test>
+#</match>
+#<match target="font">
+#<test name="size" compare="eq"><double>6</double></test>
+#</match>
 
 
 # BASH::
@@ -173,6 +184,7 @@ bunzip2 backup.tar.bz2
 # распаковка bz2
 tar -xf backup.tar
 # распаковка tar
+tar -xvzf backup.tar.gz
 bunzip2 backup.tar.bz2; tar -xf backup.tar
 
 > my_file
@@ -212,6 +224,13 @@ du -d 1 -h ~/tmp/
 du -sh *
 du -sh temp/*
 # size of directory
+
+# List Disk
+fdisk -l
+
+# mount <path USB storage> <mount dir>
+mount /dev/sda1 /mnt/USB
+umount /mnt/USB
 
 # grep логов apache
 ls /var/log/apache2/
@@ -278,21 +297,12 @@ siege -c2 -t60M -i -f /var/tmp/urls.txt
 # -t время, за которое должно пройти тестирование
 # -r, --reps=NUM REPS, number of times to run the test.
 
-
-# APACHE::
-
-
-mv common common-tmp; mv common-20140101 common; apache2ctl restart
-# откатить проект
-apache2ctl restart
-# Restarts the Apache httpd daemon. If the daemon is not running, it is started.
-apache2ctl graceful
-# Gracefully restarts the Apache httpd daemon.
-# If the daemon is not running, it is started.
-# This differs from a normal restart in that currently open connections are not aborted.
-
 cp -r /var/www/common /var/www/common-20140101
 cp -r common common-20140101
+# копирует директорию dir в dir2
+cp -r dir dir2
+# копирует содержимое директории dir в dir2
+cp -r dir/. dir2
 
 scp testuser@example.com:/var/www/common/filename.java /var/www/common/testdir
 # откуда / куда
@@ -313,7 +323,22 @@ mkdir -p /backup/{2008,2009,2010}/{01,02,03,04,05,06,07,08,09,10,11,12}/
 # create multiple directory in one mkdir command
 
 
+# APACHE::
+
+
+mv common common-tmp; mv common-20140101 common; apache2ctl restart
+# откатить проект
+apache2ctl restart
+# Restarts the Apache httpd daemon. If the daemon is not running, it is started.
+apache2ctl graceful
+# Gracefully restarts the Apache httpd daemon.
+# If the daemon is not running, it is started.
+# This differs from a normal restart in that currently open connections are not aborted.
+
+
 # COMPOSER::
+
+
 # Install
 # You can run these commands to easily access composer from anywhere on your system:
 curl -sS https://getcomposer.org/installer | php
