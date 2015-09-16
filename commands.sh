@@ -35,12 +35,12 @@ ggVG # (g+g+Shift+v+Shift+g) выделить все
 gg # в начало файла
 G # (Shift+g) в конец файла
 Shift+v # visual line mode
-	3j # press 3j to go down 3 lines, or press j 3 times
-	d # to delete select row
-	y # to yank/copy
-	x # to cut
-	p # to paste after cursor
-	P # to paste before cursor
+  3j # press 3j to go down 3 lines, or press j 3 times
+  d # to delete select row
+  y # to yank/copy
+  x # to cut
+  p # to paste after cursor
+  P # to paste before cursor
 
 :! # execute shell commands
 /filepath +'номер строки'
@@ -143,6 +143,27 @@ hg cat -r REV /filepath1 > /filepath1
 
 # ARCH::
 
+:<<Arch_apps
+Window manager [wm]         -> awesome [dynamic wm], bspwm [tiling wm]
+Virtual terminal            -> urxvt terminal
+System info                 -> htop
+Shadows done with           -> compton
+Like rainmeter              -> conky
+Music Player Daemon         -> mpd
+Mpd client                  -> ncmpcpp
+weechat
+More info about sys         -> inxi
+Mail client                 -> mutt
+
+dfc, screenfetch
+Arch_apps
+
+:<<fonts
+tamsyn
+Anorexia
+artwiz lime
+artwiz Edges
+fonts
 
 # настройка шрифтов
 
@@ -213,9 +234,9 @@ sudo chgrp -R devs .;sudo chmod -R g+w .
 # example 253 -w-(2) r-x(4+1) -wx(2+1)
 
 ls -l
-#	-l (list) содержимое директории
-#	-lh (h) размер файла/директории
-#	-lt сортировка по времени
+#  -l (list) содержимое директории
+#  -lh (h) размер файла/директории
+#  -lt сортировка по времени
 
 du -d 1 -h ~/tmp/
 # (Disk Usage)
@@ -251,12 +272,12 @@ kill pid
 pkill -f my_pattern # убить процессы по маске 'my_pattern'
 
 less /filepath
-#	Shift+G - перейти в конец
-#	Shift+F - режим слежения лога аналог (tail -f)
-#	? - поиск назад
-#	/ - поиск вперед
-#	N - перейти к след.
-#	n - перейти к пред.
+#  Shift+G - перейти в конец
+#  Shift+F - режим слежения лога аналог (tail -f)
+#  ? - поиск назад
+#  / - поиск вперед
+#  N - перейти к след.
+#  n - перейти к пред.
 
 find . -name '*.js' -exec hg revert -C {} \;
 # -exec для найденных файлов выполнить команду
@@ -306,7 +327,7 @@ cp -r dir/. dir2
 
 scp testuser@example.com:/var/www/common/filename.java /var/www/common/testdir
 # откуда / куда
-#	скопировать файл по SSH в директорию
+# скопировать файл по SSH в директорию
 
 # copy the directory "foo" from the local host to a remote host's directory "bar"
 scp -r foo testuser@example.com:/some/remote/directory/bar
@@ -314,8 +335,8 @@ scp -r foo testuser@example.com:/some/remote/directory/bar
 time wget -O 'test' 'http://www.example.com/'
 # загрузить содержимое страницы в файл test
 wget --force-html -i /home/user/urls.html -P /home/user/tmp/ -o /home/user/tmp/logs
-#							|						|					|
-#					files with urls			downloaded files		log file
+#                             |                     |                  |
+#                      files with urls      downloaded files        log file
 # конвейер загрузки сайтов, ссылки на которые указаны в html файле
 
 mkdir -m 664 /var/tmp/xdebug
