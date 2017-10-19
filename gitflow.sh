@@ -10,12 +10,12 @@ git reset --hard origin/feature-1
 
 git add --force file
 
-#find deleted code
+# find deleted code
 git log -c -S'missingtext' /path/to/file
 
 git diff feature-1..feature-2
 
-#updating file permissions only in git
+# updating file permissions only in git
 git update-index --chmod=+x script.sh
 git commit -m 'change mode back'
 
@@ -39,12 +39,12 @@ git push -f
 git log --merges --pretty=oneline --abbrev-commit -n 5
 git log --pretty=oneline --abbrev-commit -n 5
 
-#delete remote branch
+# delete remote branch
 git push origin --delete branch_name
 
-git branch --merged #lists branches merged into HEAD (i.e. tip of current branch)
+git branch --merged # lists branches merged into HEAD (i.e. tip of current branch)
 
-git branch --no-merged #lists branches that have not been merged
+git branch --no-merged # lists branches that have not been merged
 
 for branch in `git branch --merged | grep feature`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r
 
