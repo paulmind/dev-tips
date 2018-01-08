@@ -389,3 +389,20 @@ php -r ''
 php --ini
 # путь к файлу php.ini
 # Dude, where's my php.ini?
+
+
+
+
+# PostgreSQL::
+
+# reinstall postgresql
+sudo apt-get update && sudo apt-get upgrade
+sudo apt-get --purge remove postgresql\*
+sudo rm -r /etc/postgresql/
+sudo rm -r /etc/postgresql-common/
+sudo rm -r /var/lib/postgresql/
+sudo userdel -r postgres
+sudo groupdel postgres
+sudo apt-get install postgresql
+sudo -u postgres psql postgres
+\password postgres
