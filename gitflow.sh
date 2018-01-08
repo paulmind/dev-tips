@@ -24,6 +24,13 @@ git rebase -i -p --onto SHA^ SHA
 git rebase --continue
 git push -f
 
+# откат ветки из прода (вариант 2)
+# откат мердж коммита
+git revert -n -m 1 SHA
+
+# откат коммита
+git revert -n SHA
+
 # удалить коммит из истории (для линейной истории)
 git rebase -i SHA
 git rebase --continue
@@ -55,4 +62,7 @@ git branch --merged | grep feature | xargs git branch -d
 # рабочий вариант для origin
 git branch -r --merged | grep -v '\*\|master\|dev' | sed 's/origin\///' | grep release | xargs -n 1 git push --delete origin
 
+git diff HEAD:full/path/to/foo branch2:full/path/to/bar
+
+git diff branch1:./relative/path/to/foo.txt branch2:./relative/path/to/foo-another.txt
 ###### GIT ######
