@@ -173,9 +173,9 @@ CREATE VIEW lock_monitor AS(
         (blockingl.relation=blockedl.relation AND blockingl.locktype=blockedl.locktype)
       ) AND blockedl.pid != blockingl.pid)
     JOIN pg_stat_activity blockinga ON blockingl.pid = blockinga.pid
-                                       AND blockinga.datid = blockeda.datid
+      AND blockinga.datid = blockeda.datid
   WHERE NOT blockedl.granted
-        AND blockinga.datname = current_database()
+    AND blockinga.datname = current_database()
 );
 
 
@@ -185,11 +185,11 @@ CREATE VIEW lock_monitor AS(
   Создание индекса без блокировок
   When this option is used, PostgreSQL will build the index without taking any locks that prevent concurrent inserts, updates, or deletes on the table;
   CREATE INDEX CONCURRENTLY
-  при построении индекса используется память, по умолчанию выделяется 64 мегабайта, что может быть мало для таблицы. это значение (maintenance_work_mem) можно увеличить в конкретной сессии
+  при построении индекса используется память, по умолчанию выделяется 64 мегабайта, что может быть мало для таблицы. Это значение (maintenance_work_mem) можно увеличить в конкретной сессии.
 */
 
 
--- чем больше строк в таблице попадает под условие, тем больше шансов у секскана оказаться дешевле, чем у прохода по индексу
+-- чем больше строк в таблице попадает под условие, тем больше шансов у Seq Scan оказаться дешевле, чем у прохода по индексу
 
 
 VACUUM (VERBOSE, ANALYZE) tablename;
