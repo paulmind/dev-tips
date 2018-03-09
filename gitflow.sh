@@ -2,6 +2,30 @@
 
 ###### GIT ######
 
+# Generating a new SSH key
+# - press Enter thrice
+ssh-keygen -t rsa -C "your_email@example.com"
+
+# You can change the passphrase for an existing private key without regenerating the keypair by typing the following command:
+ssh-keygen -p
+
+# ignore file mode (chmod) changes (local repo config)
+git config core.filemode false
+# global git config
+git config --global core.filemode false
+
+git config user.name "Mona Lisa"
+git config user.email johndoe@example.com
+
+
+# remove a large committed file from your Git repository
+git rm giant_file
+# stage our giant file for removal, but leave it on disk
+git rm --cached giant_file
+git commit --amend --allow-empty
+git rebase --continue
+
+
 git clone https://github.com/paulmind/dev-tips.git ./dev-tips
 
 git checkout -b feature-1 origin/feature-1
