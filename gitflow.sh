@@ -67,8 +67,39 @@ git reset --hard SHA
 git push -f
 
 # показать 5 последних мерджей
-git log --merges --pretty=oneline --abbrev-commit -n 5
-git log --pretty=oneline --abbrev-commit -n 5
+# --first-parent instructs git log to log only the first parent of each commit
+
+# git log has a tool you can use to visualize all of this merging, --graph. The output looks like this:
+
+#  *   8aec370 0 seconds ago Merge branch 'branch3'
+#  |\
+#  | * f88c7ba 2 seconds ago branch 3
+#  * |   b7b4b7c 1 second ago Merge branch 'branch1'
+#  |\ \
+#  | * | 974b6d7 5 seconds ago branch 1
+#  | |/
+#  * |   7b79ec5 3 seconds ago Merge branch 'branch2'
+#  |\ \
+#  | * | accf1ce 4 seconds ago branch 2
+#  | |/
+#  * | a26aed9 6 seconds ago commit directly on master
+#  |/
+#  * 2d56476 7 seconds ago initial
+
+# here’s what we see when we git log --first-parent.
+
+#  8aec370 0 seconds ago Merge branch 'branch3'
+#  b7b4b7c 1 second ago Merge branch 'branch1'
+#  7b79ec5 3 seconds ago Merge branch 'branch2'
+#  a26aed9 6 seconds ago commit directly on master
+#  2d56476 7 seconds ago initial
+
+git log -n 5 --oneline --merges --first-parent
+
+# that “pretty” argument says to show the commit hash, the relative timestamp, and the commit message, all on one line per commit;
+git log -n 5 --pretty="format:%h %s %ar" --merges --first-parent
+
+git log -n 5 --oneline --merges --graph
 
 # delete remote branch
 git push origin --delete branch_name
