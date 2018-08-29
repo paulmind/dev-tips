@@ -66,6 +66,7 @@ git reset --hard HEAD~1
 git reset --hard SHA
 git push -f
 
+
 # показать 5 последних мерджей
 # --first-parent instructs git log to log only the first parent of each commit
 
@@ -100,6 +101,7 @@ git log -n 5 --oneline --merges --first-parent
 git log -n 5 --pretty="format:%h %s %ar" --merges --first-parent
 
 git log -n 5 --oneline --merges --graph
+
 
 # delete remote branch
 git push origin --delete branch_name
