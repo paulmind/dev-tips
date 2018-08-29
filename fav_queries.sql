@@ -233,6 +233,7 @@ GROUP BY grantee;
 
 -- show path to config
 SHOW hba_file;
+SELECT * FROM pg_settings;
 
 
 -- upsert
@@ -247,9 +248,12 @@ ON CONFLICT (code)
 
 
 CREATE INDEX CONCURRENTLY mail_log_fts_idx ON mail_log USING gin(
-  (setweight( coalesce( to_tsvector('russian', subject),''),'A') || ' ' ||
-   setweight( coalesce( to_tsvector('russian', email),''),'B') || ' ' ||
-   setweight( coalesce( to_tsvector('russian', body),''),'C')));
+  (
+    setweight( coalesce( to_tsvector('russian', subject),''),'A') || ' ' ||
+    setweight( coalesce( to_tsvector('russian', email),''),'B') || ' ' ||
+    setweight( coalesce( to_tsvector('russian', body),''),'C')
+  )
+);
 
 
 -- генерация данных select для update
@@ -261,3 +265,101 @@ SELECT * FROM (
     (4, 20, 202),
     (5, 20, 203)
 ) as tab (oid, identifier, value);
+
+
+-- установка pg_buffercache (команда выполняется для конкретной базы данных)
+CREATE EXTENSION pg_buffercache;
+-- модуль pg_buffercache даёт возможность понять, что происходит в общем кеше буферов в реальном времени
+SELECT c.relname, COUNT(*) AS buffers
+FROM pg_buffercache b
+INNER JOIN pg_class c ON b.relfilenode = pg_relation_filenode(c.oid)
+  AND b.reldatabase IN (0, (SELECT oid FROM pg_database WHERE datname = current_database()))
+GROUP BY c.relname
+ORDER BY 2 DESC
+LIMIT 20;
+
+
+-- основная идея вынести вычисляемые значения во внешний запрос
+-- если есть OFFSET он будет вычислять их для всей выборки
+-- необходимо убрать GROUP BY
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT
+  "t1"."girl_email"                                                           AS "email",
+  "t1"."first_name"                                                           AS "Name",
+  "t1"."girl_phone"                                                           AS "phone",
+  CONCAT(last_name, ' ', LEFT(first_name, 1), '.', LEFT(middle_name, 1), '.') AS "contact_face",
+  COALESCE(ct.short_name, ct.full_name)                                       AS "firm_name",
+  "ct"."inn"                                                                  AS "inn",
+  "ct"."id"                                                                   AS "contractor_id",
+  "ct"."kpp"                                                                  AS "kpp",
+  array_to_string(array_agg(DISTINCT okved.okved_code), ',')                  AS "okveds2",
+  array_to_string(array_agg(DISTINCT okpd.okpd_code), ',')                    AS "okpds2"
+FROM "girls" AS "t1"
+  LEFT JOIN "contractors" AS "ct" ON "t1"."contractor_id" = "ct"."id"
+  LEFT JOIN "contractor_okved2" AS "okved" ON "ct"."id" = "okved"."contractor_id"
+  LEFT JOIN "contractor_okpd2" AS "okpd" ON "ct"."id" = "okpd"."contractor_id"
+GROUP BY "ct"."id", "girl_email", "first_name", "girl_phone", "contact_face", "firm_name",
+  "inn", "kpp"
+LIMIT '1000'
+OFFSET '120000';
+
+
+-- after optimization
+SELECT
+  DISTINCT ON (okved.okved_code, okpd.okpd_code)
+  t2.*,
+  array_to_string(array_agg(okved.okved_code) OVER (PARTITION BY t2.contractor_id ), ',') AS "okveds2",
+  array_to_string(array_agg(okpd.okpd_code) OVER (PARTITION BY t2.contractor_id ), ',') AS "okpds2"
+FROM
+  (SELECT DISTINCT ON (ct.id)
+     "t1"."girl_email"                                                           AS "email",
+     "t1"."first_name"                                                           AS "Name",
+     "t1"."girl_phone"                                                           AS "phone",
+     CONCAT(last_name, ' ', LEFT(first_name, 1), '.', LEFT(middle_name, 1), '.') AS "contact_face",
+     COALESCE(ct.short_name, ct.full_name)                                       AS "firm_name",
+     "ct"."inn"                                                                  AS "inn",
+     "ct"."id"                                                                   AS "contractor_id",
+     "ct"."kpp"                                                                  AS "kpp"
+   FROM "girls" AS "t1"
+     LEFT JOIN "contractors" AS "ct" ON "t1"."contractor_id" = "ct"."id"
+    -- LIMIT 1000
+    -- OFFSET 120000
+  ) AS t2
+  LEFT JOIN "contractor_okved2" AS "okved" ON "t2"."contractor_id" = "okved"."contractor_id"
+  LEFT JOIN "contractor_okpd2" AS "okpd" ON "t2"."contractor_id" = "okpd"."contractor_id";
+
+
+EXPLAIN ANALYZE
+SELECT u.id FROM users u
+  JOIN (VALUES (1099), (1090), (1088), (1087)) AS v(id) ON u.id = v.id;
+-- WHERE (u.id IN (1099, 1090, 1088, 1087))
+
+
+-- shows when the wraparound comes
+WITH t1 AS (
+  SELECT pgs.name, pgs.setting::INT multixact_max_age, pgs2.name, pgs2.setting::INT max_age
+  FROM pg_settings pgs, pg_settings pgs2
+  WHERE pgs.name = 'autovacuum_multixact_freeze_max_age'
+    AND pgs2.name = 'autovacuum_freeze_max_age'
+)
+SELECT
+  c.oid::regclass::text AS table_name,
+  age(relfrozenxid) AS xid_age,
+  mxid_age(relminmxid) AS mxid_age,
+  least(
+    (t1.max_age) - age(relfrozenxid),
+    (t1.multixact_max_age) - mxid_age(relminmxid)
+  ) AS tx_before_wraparound_vacuum,
+  CASE
+  WHEN (age(relfrozenxid)::bigint > t1.max_age) OR (mxid_age(relminmxid)::bigint > t1.multixact_max_age)
+    THEN true
+  ELSE false
+  END AS need_wraparound,
+  pg_size_pretty(pg_total_relation_size(c.oid)) AS size,
+  pg_stat_get_last_autovacuum_time(c.oid) AS last_autovacuum
+FROM pg_class c
+  CROSS JOIN t1
+  JOIN pg_namespace n on n.oid = c.relnamespace
+WHERE c.relkind IN ('r', 'm')
+  AND n.nspname = 'public'
+ORDER BY tx_before_wraparound_vacuum;

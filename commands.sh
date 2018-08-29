@@ -255,9 +255,17 @@ umount /mnt/USB
 
 # grep логов apache
 ls /var/log/apache2/
-grep '30/Sep/2013' /var/log/apache2/access.log|wc
-grep '30/Sep/2013:14:10' access.log|wc
+grep '30/Sep/2013' /var/log/apache2/access.log | wc
+grep '30/Sep/2013:14:10' access.log | wc
 grep '30/Sep/2013:14:10' access.log>~test/tmp/apache.log
+
+grep 'Jan 12 ' /var/log/apache2/errors.log | grep 'Warning' | awk -F '  ' '{print $2}' | cut -c -50 | sort | uniq -c | sort -rn
+# выводит кол-во варнингов из error-лога апача
+#  58388 strpos() expects parameter 1 to be string, array g
+#  12324 var_export does not handle circular references in
+#  10166 Missing argument 1 for Core_File_File::getFilePath
+#   ...  ...
+#    936 apc_store(): GC cache entry
 
 sudo crontab -l
 sudo crontab -e
@@ -347,8 +355,6 @@ mkdir -p /backup/{2008,2009,2010}/{01,02,03,04,05,06,07,08,09,10,11,12}/
 # APACHE::
 
 
-mv common common-tmp; mv common-20140101 common; apache2ctl restart
-# откатить проект
 apache2ctl restart
 # Restarts the Apache httpd daemon. If the daemon is not running, it is started.
 apache2ctl graceful
@@ -406,3 +412,14 @@ sudo groupdel postgres
 sudo apt-get install postgresql
 sudo -u postgres psql postgres
 \password postgres
+
+# create and restore dump commands
+pg_dump -d db_name -t table_name -f /tmp/table_name.dump -Fc -v
+
+pg_dump -h localhost -U postgres -d db_name -Fc -v -b -Ox -a --table=table_name --file=table_name.dump
+
+psql -h localhost -U postgres -d db_name -c '\x' -c 'TRUNCATE table_name RESTART IDENTITY;'
+
+pg_restore -h localhost -U postgres -v -a -d db_name table_name.dump
+# but even if all you've got is a full dump of the source database, you can still restore that single table by simply extracting it out of the large dump first:
+pg_restore -h localhost -U postgres -v --data-only --table=table_name fulldump.dump > table_name.dump
