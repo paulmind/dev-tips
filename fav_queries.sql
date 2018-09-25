@@ -58,11 +58,31 @@ FROM pg_catalog.pg_statio_all_tables AS st
     AND c.table_name = 'table_name'
   );
 
+-- показывает наследников роли
+SELECT * FROM (
+  SELECT r.rolname,
+    r.rolsuper,
+    r.rolinherit,
+    r.rolcreaterole,
+    r.rolcreatedb,
+    r.rolcanlogin,
+    r.rolconnlimit,
+    ARRAY(
+      SELECT b.rolname
+      FROM pg_catalog.pg_auth_members m
+      JOIN pg_catalog.pg_roles b ON (m.roleid = b.oid)
+      WHERE m.member = r.oid
+    ) as memberof
+  FROM pg_catalog.pg_roles r
+  ORDER BY 1
+  ) as t
+WHERE 'role_name' = ANY(memberof);
 
+-- показывает ограничения (table_constraints) таблицы
 SELECT
   tc.*,
-  ccu.table_name  AS main_table,
-  tc.table_name   AS slave_table,
+  ccu.table_name AS main_table,
+  tc.table_name AS slave_table,
   ccu.column_name,
   con.confupdtype AS "UPDATE ACTION",
   con.confdeltype AS "DELETE ACTION"
@@ -71,9 +91,9 @@ FROM information_schema.table_constraints tc
     ON tc.constraint_catalog = ccu.constraint_catalog
   INNER JOIN pg_constraint con
     ON tc.constraint_name = con.conname
-       AND tc.constraint_schema = ccu.constraint_schema
-       AND tc.constraint_name = ccu.constraint_name
-       AND ccu.table_name IN ('table_name')
+      AND tc.constraint_schema = ccu.constraint_schema
+      AND tc.constraint_name = ccu.constraint_name
+      AND ccu.table_name IN ('table_name')
 WHERE tc.constraint_type IS NOT NULL;
 --WHERE lower(tc.constraint_type) in ('foreign key');
 
