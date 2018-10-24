@@ -292,6 +292,8 @@ find . -name '*.js' -exec hg revert -C {} \;
 # возврат файлов из репозитория
 find -type f -name 'header.php' -exec sed -i -r 's/nocache=20140303/nocache=20140320/g' {} \;
 # рекурсивный поиск и замена текста в файлах
+find . -mindepth 2 -maxdepth 2 -type d -ctime +10 -exec rm -rf {} \;
+# script to delete directories older than n (10) days
 
 ionice -c 3 find . -name '*.php'
 # низкий приоритет выполнения команд (если диск загружен не использует его, только когда диск свободен)
