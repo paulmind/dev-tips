@@ -26,6 +26,13 @@ git commit --amend --allow-empty
 git rebase --continue
 
 
+# добавить изменения в последний коммит
+git add file
+git commit --amend
+git rebase --continue # если конфликты
+git push -f
+
+
 git clone https://github.com/paulmind/dev-tips.git ./dev-tips
 
 git checkout -b feature-1 origin/feature-1
@@ -103,14 +110,12 @@ git log -n 5 --pretty="format:%h %s %ar" --merges --first-parent
 git log -n 5 --oneline --merges --graph
 
 
-# delete remote branch
+###### delete remote branch ######
 git push origin --delete branch_name
 
 git branch --merged # lists branches merged into HEAD (i.e. tip of current branch)
 
 git branch --no-merged # lists branches that have not been merged
-
-for branch in `git branch --merged | grep feature`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r
 
 # рабочий вариант для local
 git branch | grep feature | xargs git branch -d
@@ -118,6 +123,25 @@ git branch --merged | grep feature | xargs git branch -d
 
 # рабочий вариант для origin
 git branch -r --merged | grep -v '\*\|master\|dev' | sed 's/origin\///' | grep release | xargs -n 1 git push --delete origin
+
+# удалить ветки, в которых последний коммит старше N дней
+# (subshell) код в скобках нужно перенести в bash-скрипт
+(
+NOW=$(date -d "now - 100 days" +"%Y-%m-%d")
+
+# local
+#git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short) %(committerdate:short)'\
+# | awk '$2 < "'$NOW'" {print $1}' | sed 's/origin\///'\
+# | xargs -n 1 git push --delete origin
+
+# remote
+# --merged/--no-merged parameter is specified
+git for-each-ref --count=30 --sort=-committerdate refs/remotes/ --format='%(refname:short) %(committerdate:short)'\
+ | awk '$2 < "'$NOW'" {print $1}' | sed 's/origin\///'
+
+)
+###### delete remote branch ######
+
 
 git diff HEAD:full/path/to/foo branch2:full/path/to/bar
 
