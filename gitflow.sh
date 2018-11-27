@@ -124,22 +124,8 @@ git branch --merged | grep feature | xargs git branch -d
 # рабочий вариант для origin
 git branch -r --merged | grep -v '\*\|master\|dev' | sed 's/origin\///' | grep release | xargs -n 1 git push --delete origin
 
-# удалить ветки, в которых последний коммит старше N дней
-# (subshell) код в скобках нужно перенести в bash-скрипт
-(
-NOW=$(date -d "now - 100 days" +"%Y-%m-%d")
+# удалить ветки, в которых последний коммит старше N дней (скрипт delete_branches.sh)
 
-# local
-#git for-each-ref --count=30 --sort=-committerdate refs/heads/ --format='%(refname:short) %(committerdate:short)'\
-# | awk '$2 < "'$NOW'" {print $1}' | sed 's/origin\///'\
-# | xargs -n 1 git push --delete origin
-
-# remote
-# --merged/--no-merged parameter is specified
-git for-each-ref --count=30 --sort=-committerdate refs/remotes/ --format='%(refname:short) %(committerdate:short)'\
- | awk '$2 < "'$NOW'" {print $1}' | sed 's/origin\///'
-
-)
 ###### delete remote branch ######
 
 
