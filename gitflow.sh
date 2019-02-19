@@ -122,7 +122,7 @@ git branch | grep feature | xargs git branch -d
 git branch --merged | grep feature | xargs git branch -d
 
 # рабочий вариант для origin
-git branch -r --merged | grep -v '\*\|master\|dev' | sed 's/origin\///' | grep release | xargs -n 1 git push --delete origin
+git branch -r --merged origin/master | grep -v '\*\|master\|dev' | sed 's/origin\///' | grep release | xargs -n 1 git push --delete origin
 
 # удалить ветки, в которых последний коммит старше N дней (скрипт delete_branches.sh)
 

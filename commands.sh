@@ -203,9 +203,13 @@ passwd
 
 bunzip2 backup.tar.bz2
 # распаковка bz2
+
 tar -xf backup.tar
 # распаковка tar
+
 tar -xvzf backup.tar.gz
+# распаковка tar gz
+
 bunzip2 backup.tar.bz2; tar -xf backup.tar
 
 > my_file
@@ -342,6 +346,11 @@ scp testuser@example.com:/var/www/common/filename.java /var/www/common/testdir
 # copy the directory "foo" from the local host to a remote host's directory "bar"
 scp -r foo testuser@example.com:/some/remote/directory/bar
 
+# synchronize folders
+# -v verbose
+# -n dry-run
+rsync -azcvn -O --stats --delete vendor/ vendor/
+
 time wget -O 'test' 'http://www.example.com/'
 # загрузить содержимое страницы в файл test
 wget --force-html -i /home/user/urls.html -P /home/user/tmp/ -o /home/user/tmp/logs
@@ -380,6 +389,7 @@ mv composer.phar /usr/local/bin/composer
 #/ /___/ /_/ / / / / / / /_/ / /_/ (__  )  __/ /
 #\____/\____/_/ /_/ /_/ .___/\____/____/\___/_/
 #                    /_/
+composer install --no-dev
 
 
 # PHP::
