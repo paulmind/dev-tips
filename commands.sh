@@ -237,6 +237,14 @@ sudo chgrp -R devs .;sudo chmod -R g+w .
 # example 664 rw-(4+2) rw-(4+2) r--(4)
 # example 253 -w-(2) r-x(4+1) -wx(2+1)
 
+
+# To change all the directories to 755 (drwxr-xr-x):
+find /opt/lampp/htdocs -type d -exec chmod 755 {} \;
+
+# To change all the files to 644 (-rw-r--r--):
+find /opt/lampp/htdocs -type f -exec chmod 644 {} \;
+
+
 ls -l
 #  -l (list) содержимое директории
 #  -lh (h) размер файла/директории
@@ -339,9 +347,12 @@ cp -r dir dir2
 # копирует содержимое директории dir в dir2
 cp -r dir/. dir2
 
-scp testuser@example.com:/var/www/common/filename.java /var/www/common/testdir
 # откуда / куда
 # скопировать файл по SSH в директорию
+scp testuser@example.com:/var/www/common/filename.java /var/www/common/testdir
+
+# сжать файл и скопировать по SSH в директорию
+ssh bob@some-sever.example.com "cat my-app.sql | gzip -c" | pv | gunzip > tmp/my-app.sql
 
 # copy the directory "foo" from the local host to a remote host's directory "bar"
 scp -r foo testuser@example.com:/some/remote/directory/bar
@@ -378,9 +389,9 @@ apache2ctl graceful
 
 
 # Install
-# You can run these commands to easily access composer from anywhere on your system:
-curl -sS https://getcomposer.org/installer | php
-mv composer.phar /usr/local/bin/composer
+# install composer one command
+curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+
 # Note: If the above fails due to permissions, run the mv line again with sudo.
 # Then, just run composer in order to run Composer instead of php composer.phar.
 #   ______
