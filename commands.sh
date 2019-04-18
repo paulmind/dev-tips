@@ -362,6 +362,9 @@ scp -r foo testuser@example.com:/some/remote/directory/bar
 # -n dry-run
 rsync -azcvn -O --stats --delete vendor/ vendor/
 
+# use the --no- options to rsync to NOT copy the ownership or permissions of the files you're sync'ing.
+rsync -azcvn --no-perms --no-owner --no-group -O --stats --delete vendor/ vendor/
+
 time wget -O 'test' 'http://www.example.com/'
 # загрузить содержимое страницы в файл test
 wget --force-html -i /home/user/urls.html -P /home/user/tmp/ -o /home/user/tmp/logs
