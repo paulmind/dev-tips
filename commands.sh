@@ -279,8 +279,11 @@ grep 'Jan 12 ' /var/log/apache2/errors.log | grep 'Warning' | awk -F '  ' '{prin
 #   ...  ...
 #    936 apc_store(): GC cache entry
 
+# list
 sudo crontab -l
+# edit
 sudo crontab -e
+sudo crontab -u www-data -l
 
 ps uax | grep keyword
 # выводит список процессов(ps) | перенаправление вывода и поиск по 'keyword'
