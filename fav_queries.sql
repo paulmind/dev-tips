@@ -383,3 +383,11 @@ FROM pg_class c
 WHERE c.relkind IN ('r', 'm')
   AND n.nspname = 'public'
 ORDER BY tx_before_wraparound_vacuum;
+
+
+-- Division ( / ) int types
+-- If your columns have integer types, and integer division truncates the result towards zero.
+-- To get an accurate result, you'll need to cast at least one of the values to float or decimal (numeric):
+select dev_cost::numeric / sell_cost from software;
+-- or
+select dev_cost / sell_cost::numeric from software;
