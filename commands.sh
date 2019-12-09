@@ -452,3 +452,6 @@ psql -h localhost -U postgres -d db_name -c '\x' -c 'TRUNCATE table_name RESTART
 pg_restore -h localhost -U postgres -v -a -d db_name table_name.dump
 # but even if all you've got is a full dump of the source database, you can still restore that single table by simply extracting it out of the large dump first:
 pg_restore -h localhost -U postgres -v --data-only --table=table_name fulldump.dump > table_name.dump
+
+pg_dump -h localhost -U postgres -d db_name -Fc --data-only -v -b --table=table_name --file=table_name.dump
+pg_restore -h localhost -U postgres --disable-triggers -v -a -d db_name table_name.dump
