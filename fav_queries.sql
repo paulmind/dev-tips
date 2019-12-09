@@ -221,6 +221,12 @@ WHERE schemaname = 'public'
 AND relname = 'my_table';
 
 
+-- autovacuum statistics
+SELECT relname, last_vacuum, last_autovacuum
+FROM pg_stat_user_tables;
+SELECT * from pg_settings where category like 'Autovacuum';
+
+
 -- индекс в сортировке не используется если при джойне есть пустые значения
 --EXPLAIN
 SELECT p.id, l.date_end
