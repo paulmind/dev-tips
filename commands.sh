@@ -201,6 +201,9 @@ passwd
 # Re-enter new password:
 # Password updated successfully.
 
+# show server date info with timezone
+timedatectl
+
 bunzip2 backup.tar.bz2
 # распаковка bz2
 
@@ -260,6 +263,8 @@ du -sh temp/*
 
 # List Disk
 fdisk -l
+# List Disk with size
+df -h
 
 # mount <path USB storage> <mount dir>
 mount /dev/sda1 /mnt/USB
