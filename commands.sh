@@ -431,6 +431,11 @@ php --ini
 # Dude, where's my php.ini?
 
 
+# SSL::
+# ca_bundle (Contains Root and Intermediate Certificate)
+cat certificate.crt ca_bundle.crt > chained.crt
+# check SSL
+openssl s_client -connect www.godaddy.com:443
 
 
 # PostgreSQL::
