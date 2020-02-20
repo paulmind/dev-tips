@@ -391,6 +391,27 @@ WHERE c.relkind IN ('r', 'm')
 ORDER BY tx_before_wraparound_vacuum;
 
 
+-- Get all objects in database with owner
+select nsp.nspname as object_schema,
+    cls.relname as object_name,
+    rol.rolname as owner,
+    case cls.relkind
+        when 'r' then 'TABLE'
+        when 'm' then 'MATERIALIZED_VIEW'
+        when 'i' then 'INDEX'
+        when 'S' then 'SEQUENCE'
+        when 'v' then 'VIEW'
+        when 'c' then 'TYPE'
+        else cls.relkind::text
+        end as object_type
+from pg_class cls
+    join pg_roles rol on rol.oid = cls.relowner
+    join pg_namespace nsp on nsp.oid = cls.relnamespace
+where nsp.nspname not in ('information_schema', 'pg_catalog')
+    and nsp.nspname not like 'pg_toast%'
+order by nsp.nspname, cls.relname;
+
+
 -- Division ( / ) int types
 -- If your columns have integer types, and integer division truncates the result towards zero.
 -- To get an accurate result, you'll need to cast at least one of the values to float or decimal (numeric):
