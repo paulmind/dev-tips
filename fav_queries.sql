@@ -236,11 +236,22 @@ ORDER BY l.date_end
 LIMIT 2;
 
 
--- посмотреть размер бд и таблиц
+-- посмотреть размер бд
 SELECT t1.datname AS db_name,
   pg_size_pretty(pg_database_size(t1.datname)) AS db_size
 FROM pg_database t1
 ORDER BY pg_database_size(t1.datname) DESC;
+
+-- посмотреть размер таблиц
+SELECT nspname || '.' || relname AS "relation",
+  pg_size_pretty(pg_total_relation_size(C.oid)) AS "total_size"
+FROM pg_class C
+LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
+WHERE nspname NOT IN ('pg_catalog', 'information_schema')
+  AND C.relkind <> 'i'
+  AND nspname !~ '^pg_toast'
+ORDER BY pg_total_relation_size(C.oid) DESC
+LIMIT 5;
 
 
 -- проверка уникальности двух полей
