@@ -159,19 +159,19 @@ FROM pg_catalog.pg_locks l
   LEFT JOIN pg_catalog.pg_database db
     ON db.oid = l.database
 WHERE (db.datname = 'sandbox' OR db.datname IS NULL)
-      AND NOT pid = pg_backend_pid();
+  AND NOT pid = pg_backend_pid();
 
 
 -- show slow queries
 SELECT
   date_trunc('seconds', NOW()-query_start) AS duration,
   pid,
-  waiting,
   substring(query from 1 for 150) query,
   state
 FROM pg_stat_activity
-WHERE state != 'idle'
-      AND NOW()-query_start >= interval '1 minutes'
+WHERE
+  NOW()-query_start >= interval '1 minutes'
+--  AND state != 'idle'
 ORDER BY 1 DESC;
 
 
