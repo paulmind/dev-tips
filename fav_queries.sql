@@ -335,8 +335,7 @@ FROM "girls" AS "t1"
   LEFT JOIN "contractors" AS "ct" ON "t1"."contractor_id" = "ct"."id"
   LEFT JOIN "contractor_okved2" AS "okved" ON "ct"."id" = "okved"."contractor_id"
   LEFT JOIN "contractor_okpd2" AS "okpd" ON "ct"."id" = "okpd"."contractor_id"
-GROUP BY "ct"."id", "girl_email", "first_name", "girl_phone", "contact_face", "firm_name",
-  "inn", "kpp"
+GROUP BY "ct"."id", "girl_email", "first_name", "girl_phone", "contact_face", "firm_name", "inn", "kpp"
 LIMIT '1000'
 OFFSET '120000';
 
@@ -349,18 +348,18 @@ SELECT
   array_to_string(array_agg(okpd.okpd_code) OVER (PARTITION BY t2.contractor_id ), ',') AS "okpds2"
 FROM
   (SELECT DISTINCT ON (ct.id)
-     "t1"."girl_email"                                                           AS "email",
-     "t1"."first_name"                                                           AS "Name",
-     "t1"."girl_phone"                                                           AS "phone",
-     CONCAT(last_name, ' ', LEFT(first_name, 1), '.', LEFT(middle_name, 1), '.') AS "contact_face",
-     COALESCE(ct.short_name, ct.full_name)                                       AS "firm_name",
-     "ct"."inn"                                                                  AS "inn",
-     "ct"."id"                                                                   AS "contractor_id",
-     "ct"."kpp"                                                                  AS "kpp"
-   FROM "girls" AS "t1"
-     LEFT JOIN "contractors" AS "ct" ON "t1"."contractor_id" = "ct"."id"
-    -- LIMIT 1000
-    -- OFFSET 120000
+    "t1"."girl_email"                                                           AS "email",
+    "t1"."first_name"                                                           AS "Name",
+    "t1"."girl_phone"                                                           AS "phone",
+    CONCAT(last_name, ' ', LEFT(first_name, 1), '.', LEFT(middle_name, 1), '.') AS "contact_face",
+    COALESCE(ct.short_name, ct.full_name)                                       AS "firm_name",
+    "ct"."inn"                                                                  AS "inn",
+    "ct"."id"                                                                   AS "contractor_id",
+    "ct"."kpp"                                                                  AS "kpp"
+  FROM "girls" AS "t1"
+  LEFT JOIN "contractors" AS "ct" ON "t1"."contractor_id" = "ct"."id"
+  --LIMIT 1000
+  --OFFSET 120000
   ) AS t2
   LEFT JOIN "contractor_okved2" AS "okved" ON "t2"."contractor_id" = "okved"."contractor_id"
   LEFT JOIN "contractor_okpd2" AS "okpd" ON "t2"."contractor_id" = "okpd"."contractor_id";
