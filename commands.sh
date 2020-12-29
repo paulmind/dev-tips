@@ -385,6 +385,46 @@ mkdir -p /backup/{2008,2009,2010}/{01,02,03,04,05,06,07,08,09,10,11,12}/
 # create multiple directory in one mkdir command
 
 
+# FAIL2BAN::
+sudo apt-get install fail2ban
+sudo fail2ban-client status
+sudo fail2ban-client restart
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+sudo nano /etc/fail2ban/jail.local
+sudo fail2ban-client status nginx-limit-req
+cd /etc/fail2ban/filter.d
+sudo nano nginx-limit-req.conf
+
+# filter config
+[nginx-limit-req]
+
+enabled = true
+filter = nginx-limit-req
+#port    = http,https
+logpath = %(nginx_error_log)s
+findtime = 600
+bantime = 86400
+maxretry = 50
+
+fail2ban-client -V
+sudo fail2ban-client status sshd
+sudo fail2ban-client status nginx-limit-req
+sudo fail2ban-client set nginx-limit-req unbanip XXX.XXX.XXX.XXX
+
+sudo fail2ban-client stop nginx-limit-req
+sudo systemctl restart fail2ban
+sudo systemctl status fail2ban
+sudo systemctl stop fail2ban
+
+fail2ban-regex '185.183.107.142 - - [28/Dec/2020:13:08:28 +0100] "GET / HTTP/1.1" 502 182 "-" "-"' '^<HOST> -.*(GET|POST) .*/.*" \d+ \d+ "-" .*'
+fail2ban-regex /var/log/auth.log /etc/fail2ban/filter.d/sshd.conf
+sudo fail2ban-regex /var/log/nginx/error.log /etc/fail2ban/filter.d/nginx-limit-req.conf
+
+#=== commands to check for ssh hacking under root ===
+last
+sudo cat /var/log/auth.log | grep -v "CRON" | grep "session opened for user root"
+
+
 # APACHE::
 
 
