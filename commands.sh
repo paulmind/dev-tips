@@ -396,7 +396,6 @@ sudo nano nginx-limit-req.conf
 
 # filter config
 [nginx-limit-req]
-
 enabled = true
 filter = nginx-limit-req
 action = iptables-allports[blocktype=DROP, protocol=all]
@@ -419,6 +418,7 @@ sudo systemctl stop fail2ban
 fail2ban-regex '185.183.107.142 - - [28/Dec/2020:13:08:28 +0100] "GET / HTTP/1.1" 502 182 "-" "-"' '^<HOST> -.*(GET|POST) .*/.*" \d+ \d+ "-" .*'
 fail2ban-regex /var/log/auth.log /etc/fail2ban/filter.d/sshd.conf
 sudo fail2ban-regex /var/log/nginx/error.log /etc/fail2ban/filter.d/nginx-limit-req.conf
+
 
 #=== commands to check for ssh hacking under root ===
 last
