@@ -391,7 +391,6 @@ sudo fail2ban-client status
 sudo fail2ban-client restart
 sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 sudo nano /etc/fail2ban/jail.local
-sudo fail2ban-client status nginx-limit-req
 cd /etc/fail2ban/filter.d
 sudo nano nginx-limit-req.conf
 
@@ -400,18 +399,19 @@ sudo nano nginx-limit-req.conf
 
 enabled = true
 filter = nginx-limit-req
-#port    = http,https
+action = iptables-allports[blocktype=DROP, protocol=all]
+#port = http,https
 logpath = %(nginx_error_log)s
 findtime = 600
-bantime = 86400
+bantime = 300
 maxretry = 50
 
 fail2ban-client -V
 sudo fail2ban-client status sshd
 sudo fail2ban-client status nginx-limit-req
 sudo fail2ban-client set nginx-limit-req unbanip XXX.XXX.XXX.XXX
+sudo fail2ban-client stop nginx-limit-req # убирает записи раздела f2b-nginx-limit-req из iptable
 
-sudo fail2ban-client stop nginx-limit-req
 sudo systemctl restart fail2ban
 sudo systemctl status fail2ban
 sudo systemctl stop fail2ban
