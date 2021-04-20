@@ -480,6 +480,18 @@ openssl s_client -connect www.godaddy.com:443
 
 # PostgreSQL::
 
+# Stopping the server safely and quickly
+
+# Режим «Smart» запрещает новые подключения, а затем ожидает отключения всех существующих клиентов и завершения всех текущих процессов резервного копирования.
+# Если сервер работает в режиме горячего резерва, восстановление и потоковая репликация будут прерваны, как только отключатся все клиенты.
+# Режим «Fast» (выбираемый по умолчанию) не ожидает отключения клиентов и завершает все текущие процессы резервного копирования. Все активные транзакции откатываются, а клиенты принудительно отключаются, после чего сервер останавливается.
+
+# Команда stop останавливает сервер, при этом systemd использует режим «Fast»
+sudo systemctl stop postgresql
+# или
+pg_lsclusters
+sudo pg_ctlcluster 10 main stop -m fast
+
 # reinstall postgresql
 sudo apt-get update && sudo apt-get upgrade
 sudo apt-get --purge remove postgresql\*
