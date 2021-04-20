@@ -504,7 +504,16 @@ sudo apt-get install postgresql
 sudo -u postgres psql postgres
 \password postgres
 
-# create and restore dump commands
+
+# Backup and Restore using compression
+sudo su - postgres
+pg_dump -d db_name -Fp -v -b -Z 5 --exclude-table-data=exclude_table --file=db_backup.gz
+psql postgres
+# CREATE DATABASE new_db OWNER user_owner;
+gunzip -c db_backup.gz | psql new_db
+
+
+# Backup and be able to restore individual tables
 pg_dump -d db_name -t table_name -f /tmp/table_name.dump -Fc -v
 
 pg_dump -h localhost -U postgres -d db_name -Fc -v -b -Ox -a --table=table_name --file=table_name.dump
