@@ -526,3 +526,45 @@ pg_restore -h localhost -U postgres -v --data-only --table=table_name fulldump.d
 
 pg_dump -h localhost -U postgres -d db_name -Fc --data-only -v -b --table=table_name --file=table_name.dump
 pg_restore -h localhost -U postgres --disable-triggers -v -a -d db_name table_name.dump
+
+
+### SSL ON POSTGRES ###
+### fix error Can't load /user/.rnd into RNG
+openssl rand -writerand .rnd
+
+### Certificate Authority
+openssl req -new -nodes -text -out root.csr -keyout root.key -subj "/CN=root.yourdomain.com"
+openssl x509 -req -in root.csr -text -days 3650 -extfile /etc/ssl/openssl.cnf -extensions v3_ca -signkey root.key -out root.crt
+
+### Server Certificate
+openssl req -new -nodes -text -out server.csr -keyout server.key -subj "/CN=dbhost.yourdomain.com"
+openssl x509 -req -in server.csr -text -days 365 -CA root.crt -CAkey root.key -CAcreateserial -out server.crt
+
+### Client Certificate
+openssl req -new -nodes -text -out client1.csr -keyout client1.key -subj "/CN=John Doe"
+openssl x509 -req -in client1.csr -text -days 365 -CA root.crt -CAkey root.key -CAcreateserial -out client1.crt
+
+### Verify all
+openssl verify -CAfile root.crt root.crt
+openssl verify -CAfile root.crt server.crt
+openssl verify -CAfile root.crt client1.crt
+
+### In config
+ssl = on
+ssl_ca_file = '/var/lib/postgresql/<version>/main/ssl_cert/root.crt'
+ssl_cert_file = '/var/lib/postgresql/<version>/main/ssl_cert/server.crt'
+#ssl_crl_file = ''
+ssl_key_file = '/var/lib/postgresql/<version>/main/ssl_cert/server.key'
+
+### Check connection
+## sslmode=verify-full
+## sslmode=verify-ca
+## sslmode=require
+## sslmode=disable
+psql "host=example.com port=5432 dbname=test user=user1 sslmode=verify-full sslcert=./client1.crt sslkey=./client1.key sslrootcert=./root.crt"
+
+### Get info about ssl connection
+openssl s_client -starttls postgres -connect example.com:5432
+### SSL ON POSTGRES ###
+
+
