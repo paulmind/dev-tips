@@ -544,6 +544,8 @@ openssl x509 -req -in server.csr -text -days 365 -CA root.crt -CAkey root.key -C
 openssl req -new -nodes -text -out client1.csr -keyout client1.key -subj "/CN=John Doe"
 openssl x509 -req -in client1.csr -text -days 365 -CA root.crt -CAkey root.key -CAcreateserial -out client1.crt
 
+### !!! It is VERY important that the CN (Common Name) is different for all certificates !!!
+
 ### Verify all
 openssl verify -CAfile root.crt root.crt
 openssl verify -CAfile root.crt server.crt
@@ -568,3 +570,44 @@ openssl s_client -starttls postgres -connect example.com:5432
 ### SSL ON POSTGRES ###
 
 
+### SSL ON POSTGRES ALGO V2 ###
+### Certificate Authority
+openssl ecparam -name prime256v1 -genkey -noout -out ca.key
+openssl req -new -x509 -sha256 -key ca.key -out ca.crt
+### Fields on Certificate Authority
+# Country Name (2 letter code) [AU]:DE
+# State or Province Name (full name) [Some-State]:.
+# Locality Name (eg, city) []:.
+# Organization Name (eg, company) [Internet Widgits Pty Ltd]:Company Name Ltd
+# Organizational Unit Name (eg, section) []:.
+# Common Name (e.g. server FQDN or YOUR name) []:root.example.com
+# Email Address []:security@example.com
+
+### Server Certificate
+openssl ecparam -name prime256v1 -genkey -noout -out server.key
+openssl req -new -sha256 -key server.key -out server.csr
+### Fields on Server Certificate
+# Country Name (2 letter code) [AU]:DE
+# State or Province Name (full name) [Some-State]:.
+# Locality Name (eg, city) []:.
+# Organization Name (eg, company) [Internet Widgits Pty Ltd]:Company Name Ltd
+# Organizational Unit Name (eg, section) []:.
+# Common Name (e.g. server FQDN or YOUR name) []:example.com
+# Email Address []:security@example.com
+# <passphrase>
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 1000 -sha256
+
+### Client Certificate
+openssl ecparam -name prime256v1 -genkey -noout -out client1.key
+openssl req -new -sha256 -key client1.key -out client1.csr
+### Fields on Client Certificate
+# Country Name (2 letter code) [AU]:DE
+# State or Province Name (full name) [Some-State]:.
+# Locality Name (eg, city) []:.
+# Organization Name (eg, company) [Internet Widgits Pty Ltd]:Company Name Ltd
+# Organizational Unit Name (eg, section) []:.
+# Common Name (e.g. server FQDN or YOUR name) []:John Doe
+# Email Address []:JohnDoe@example.com
+# <passphrase>
+openssl x509 -req -in client1.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client1.crt -days 1000 -sha256
+### SSL ON POSTGRES ALGO V2 ###
